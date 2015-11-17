@@ -1,5 +1,7 @@
 from flask import Flask, request
 from urlparse import parse_qs
+import random
+import urllib, urllib2
 application = Flask(__name__)
 
 
@@ -17,23 +19,32 @@ def requestColour():
 	colourFile.close()
 	return colour
 
-#couple of simple URL request tests
-#/ will be replaced with a page showing the current colour
-@application.route("/")
+#/ will be the location of the webapp
+@application.route("/", methods = ['GET','POST'])
 def hello():
-	print "Some guy or gal just accessed /."
-	#determine the currentColour
+	if request.method == 'POST':
+		request_data = parse_qs(request.get_data())
+		print request_data
+		if request_data['action'][0] == 'update':
+			pass
+			#first, check the server for the colour
+			colour = requestColour()
+			#then, if the local colour is the same, do nothing
+			#TODO: this will only make sense when each user has a static colour
+			#otherwise, update the server
+			changeColour("#%06x" % random.randint(0, 0xFFFFFF))
+	print "Someone just accessed /."
+	#determine the currentColour on initial access of the page
 	colour = requestColour()
-	return "<center><div style='background-colour:" + colour + "width:auto; padding:auto'><h1 style='color:" + colour + "'>Hello There!</h1></div></center>"
-
-#example of another page
-@application.route("/test")
-def test():
-	print "Some bloke just accessed /test."
-	return "<h1 style='color:yellow'>Testing...</h1>"
+	return "\
+		<body style='background-color:" + colour + ";'>\
+			<form action='' method='POST'>\
+				<button name ='action' value='update' style='display:block; width:100%; height:100%; background:" + colour + "; border:0;'></button>\
+			</form>\
+		</body>"
 
 #if a post request is received:
-@application.route("/", methods = ['POST'])
+@application.route("/app", methods = ['POST'])
 def changeColourPost():
 	if request.method == "POST":
 		print "post request received."
