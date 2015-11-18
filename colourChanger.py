@@ -2,21 +2,24 @@ from flask import Flask, request
 from urlparse import parse_qs
 import random
 import urllib, urllib2
+import redis, json
+from datetime import datetime
 application = Flask(__name__)
 
 
 #function to change the colour saved in currentColour.txt
 def changeColour(colour):
-	colourFile = open("currentColour.txt", "w")
 	if isinstance(colour, basestring):
-		colourFile.write(colour)
-	colourFile.close()
+		#access the redis database
+		redis_db = redis.Redis(host = 'localhost', db = 0)
+		#add the current time and new colour value as a json
+		redis_db.rpush('entries','{"time":"' + str(datetime.now()) + '", "colour-to":"' + colour + '"}')
 
 #function to request the colour saved in currentColour.txt
 def requestColour():
-	colourFile = open("currentColour.txt", "r")
-	colour = colourFile.read()
-	colourFile.close()
+	#access the redis database
+	redis_db = redis.Redis(host = 'localhost', db = 0)
+	colour = json.loads(redis_db.lindex('entries', -1))["colour-to"]
 	return colour
 
 #/ will be the location of the webapp
