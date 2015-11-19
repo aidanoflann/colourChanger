@@ -1,8 +1,9 @@
-from flask import Flask, request, session, url_for, redirect
+from flask import Flask, request, session, url_for, redirect, flash
 from urlparse import parse_qs
 import random
 import urllib, urllib2
 import redis, json
+import hashlib
 from datetime import datetime
 application = Flask(__name__)
 
@@ -48,7 +49,7 @@ def rootPage():
 				#then, if the local colour is the same, do nothing
 				#TODO: this will only make sense when each user has a static colour
 				#otherwise, update the server
-				changeColour("#%06x" % random.randint(0, 0xFFFFFF))
+				changeColour(redis_db.hmget('user:'+session['username'],'colour'))
 		print "Someone just accessed /."
 		#determine the currentColour on initial access of the page
 		colour = requestColour()
@@ -64,7 +65,6 @@ def rootPage():
 @application.route("/login", methods = ['GET','POST'])
 def login():
 	colour = requestColour()
-	print colour
 	if request.method == "GET":
 		return "<body style = 'background-color:" + colour + "'>\
 			<center><div style = 'background-color:white; color:black; width:40%;'>\
@@ -79,13 +79,23 @@ def login():
 			</body>"
 	elif request.method == "POST":
 		request_data = parse_qs(request.get_data())
-		print(request_data)
-		#if the login was successful
+		pass_hashed = hashlib.md5(request_data['password'][0]).digest()
 		session['logged_in'] = True
-		#session['username'] = username
-		return redirect('/')
-		#if the login was unsuccessful (aka the user registered)
-		#add the username, hashed pw and random colour to the db
+		session['username'] = request_data['username'][0]
+		#if the user doesn't exist already...
+		if not 'user:'+session['username'] in redis_db.keys():
+			#add his username and pass, and assign him a random colour
+			redis_db.hmset('user:'+session['username'],{'password':pass_hashed, 'colour': '#%06x' % random.randint(0, 0xFFFFFF)})
+			changeColour(redis_db.hmget('user:'+session['username'],'colour')[0])
+			return redirect('/')
+		#if it does, compare passwords
+		else:
+			if pass_hashed == redis_db.hmget('user:'+session['username'],'password')[0]:
+				changeColour(redis_db.hmget('user:'+session['username'],'colour')[0])
+				return redirect('/')
+			else:
+				return redirect('/login')
+		
 
 #if a post request is received:
 @application.route("/app", methods = ['POST'])
