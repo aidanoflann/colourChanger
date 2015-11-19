@@ -11,8 +11,6 @@ application = Flask(__name__)
 redis_db = redis.Redis()
 #if you're not Aidan O'Flannagain don't read the next line
 application.secret_key = '\x94\xe5\xac\xed\x00*A\x9f\xf1\x98\x91\xcd\x94\xba\x8b\x8e\xf5>\xe4\x98\xa0\xcc\xba\x9b'
-#application.config['SESSION_TYPE'] = 'filesystem'
-#application.run()
 
 #open redis connection before requests
 @application.before_request
@@ -39,17 +37,17 @@ def requestColour():
 @application.route("/", methods = ['GET','POST'])
 def rootPage():
 	if session.get('logged_in'):
+		#temporarily redirecting to login in all cases while session issue is resolved
+		return redirect('/login')
 		if request.method == 'POST':
 			request_data = parse_qs(request.get_data())
 			print request_data
 			if request_data['action'][0] == 'update':
-				pass
 				#first, check the server for the colour
 				colour = requestColour()
-				#then, if the local colour is the same, do nothing
-				#TODO: this will only make sense when each user has a static colour
-				#otherwise, update the server
-				changeColour(redis_db.hmget('user:'+session['username'],'colour'))
+				#then, if the local colour is not the same, change the colour
+				if not redis_db.hmget('user:'+session['username'],'colour') == colour:
+					changeColour(redis_db.hmget('user:'+session['username'],'colour'))
 		print "Someone just accessed /."
 		#determine the currentColour on initial access of the page
 		colour = requestColour()
@@ -79,6 +77,9 @@ def login():
 			</body>"
 	elif request.method == "POST":
 		request_data = parse_qs(request.get_data())
+		#first, redirect if either the username or pass were empty
+		if not ('username' in request_data.keys() and 'password' in request_data.keys()):
+			return redirect('/login')
 		pass_hashed = hashlib.md5(request_data['password'][0]).digest()
 		session['logged_in'] = True
 		session['username'] = request_data['username'][0]
@@ -92,7 +93,7 @@ def login():
 		else:
 			if pass_hashed == redis_db.hmget('user:'+session['username'],'password')[0]:
 				changeColour(redis_db.hmget('user:'+session['username'],'colour')[0])
-				return redirect('/')
+				return redirect('/login')
 			else:
 				return redirect('/login')
 		
