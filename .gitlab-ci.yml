@@ -8,7 +8,7 @@ stages:
 docker_login:
   stage: docker_login
   script:
-    - DOCKER_LOGIN_COMMAND=$(aws ecr get-login --region eu-west-1)
+    - DOCKER_LOGIN_COMMAND=$(aws ecr get-login --region eu-west-1 --no-include-email)
     - $DOCKER_LOGIN_COMMAND
   tags:
     - docker
