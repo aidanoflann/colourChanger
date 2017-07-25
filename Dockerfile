@@ -7,4 +7,8 @@ RUN apt-get update
 RUN apt-get install redis-server uwsgi-core uwsgi-plugin-python nginx
 RUN pip install --upgrade -r requirements.txt
 
-# TODO: set up nginx config, and arrange for startup of required service (see readme.md)
+CMD service nginx start
+CMD redis-server
+CMD uwsgi --ini colourChanger.ini
+
+# TODO: set up nginx config
