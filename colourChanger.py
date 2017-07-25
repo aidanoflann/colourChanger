@@ -1,8 +1,8 @@
-from flask import Flask, request, session, url_for, redirect, flash
+from flask import Flask, request, session, url_for, redirect
 from urlparse import parse_qs
 import random
-import urllib, urllib2
-import redis, json
+import redis
+import json
 import hashlib
 from datetime import datetime
 application = Flask(__name__)
