@@ -47,7 +47,10 @@ def request_colour():
     request the colour saved in redis database
     :return: 
     """
-    colour = json.loads(redis_db.lindex('entries', -1))["colour-to"]
+    stored_colour = redis_db.lindex('entries', -1)
+    if stored_colour is None:
+        return "#000000"
+    colour = json.loads(stored_colour)["colour-to"]
     return colour
 
 
@@ -136,3 +139,7 @@ def change_colour_post():
             return "Unrecognised request type."
     else:
         return "Not a POST request"
+
+
+if __name__ == "__main__":
+    application.run()
