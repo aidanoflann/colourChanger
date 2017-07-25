@@ -1,0 +1,19 @@
+server {
+	listen 8000;
+	server_name doraboro.ddns.net;
+
+	location / {
+		include uwsgi_params;
+        	uwsgi_pass unix:/home/pi/colourChanger/webHome.sock;
+    	}
+}
+
+server {
+	listen 8008;
+	server_name doraboro.ddns.net;
+	
+	location / {
+		include uwsgi_params;
+		uwsgi_pass unix:/home/pi/colourChanger/colourChanger.sock;
+	}
+}
