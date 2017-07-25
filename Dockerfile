@@ -4,7 +4,7 @@ MAINTAINER Aidan OFlannagain
 ADD . .
 
 RUN apt-get update
-RUN apt-get install redis-server uwsgi-core uwsgi-plugin-python nginx
+RUN apt-get install -y redis-server uwsgi-core uwsgi-plugin-python nginx
 RUN pip install --upgrade -r requirements.txt
 
 CMD service nginx start
