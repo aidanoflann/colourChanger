@@ -10,4 +10,4 @@ RUN pip install --upgrade -r requirements.txt
 ADD nginx_config/sites-available/* /etc/nginx/sites-available/
 RUN ln -s /etc/nginx/sites-available/colourChanger /etc/nginx/sites-enabled/colourChanger
 
-CMD service nginx start ; redis-server & uwsgi --ini colourChanger.ini&
+CMD sh start.sh
