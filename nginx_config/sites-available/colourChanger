@@ -13,7 +13,7 @@ server {
 	server_name doraboro.ddns.net;
 
 	location / {
-		proxy_pass http://lb.aidanof.com;
+		proxy_pass http://colours.aidanof.com;
 	}
 }
 
