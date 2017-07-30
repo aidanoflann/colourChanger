@@ -100,7 +100,7 @@ def root_page():
 def login():
     colour = request_colour()
     last_change_time = parser.parse(get_last_change_time())
-    days, hours, minutes, seconds = days_hours_minutes_seconds(datetime.now(), last_change_time)
+    days, hours, minutes, seconds = days_hours_minutes_seconds(datetime.utcnow(), last_change_time)
     if request.method == "GET":
         return "<body style = 'background-color:" + colour + "'>\
             <center><div style = 'background-color:white; color:black; width:40%;'><br>\
