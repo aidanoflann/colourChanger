@@ -10,6 +10,7 @@ application = Flask(__name__)
 
 # generate a redis_db variable
 redis_db = redis.Redis(host="redis-10949.c2.eu-west-1-3.ec2.cloud.redislabs.com", port="10949")
+# redis_db = redis.Redis()
 # if you're not Aidan O'Flannagain don't read the next line
 application.secret_key = '\x94\xe5\xac\xed\x00*A\x9f\xf1\x98\x91\xcd\x94\xba\x8b\x8e\xf5>\xe4\x98\xa0\xcc\xba\x9b'
 
@@ -38,6 +39,9 @@ def change_colour(colour):
     :param colour: 
     :return: 
     """
+    if colour == request_colour():
+        # no need to write to the db, the colour is already set
+        return
     if isinstance(colour, basestring):
         # add the current time and new colour value as a json
         redis_db.rpush('entries', '{"time":"' + str(datetime.utcnow()) + '", "colour-to":"' + colour + '"}')
