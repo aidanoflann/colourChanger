@@ -101,7 +101,7 @@ def login():
     last_change_time = get_last_change_time()
     if request.method == "GET":
         return "<body style = 'background-color:" + colour + "'>\
-            <center><div style = 'background-color:white; color:black; width:40%;'>\
+            <center><div style = 'background-color:white; color:black; width:40%;'><br>\
                 Please enter your username and password below.<br>\
                 If you don't have an account, one will be created.<br>\
                 <form method='POST'>\
