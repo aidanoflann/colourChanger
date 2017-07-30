@@ -9,6 +9,16 @@ server {
 }
 
 server {
+	listen 8008;
+	server_name doraboro.ddns.net;
+
+	location / {
+		proxy_pass http://lb.aidanof.com;
+	}
+}
+
+
+server {
 	listen 8009;
 	server_name doraboro.ddns.net;
 	
