@@ -110,6 +110,7 @@ def login():
                     <input type='submit'>\
                 </form><br>\
                 This page has been <span style='color:{}'>{}</span> since {}.<br>\
+            <br>\
             </center></div>\
             </body>".format(colour, colour, last_change_time)
     elif request.method == "POST":
