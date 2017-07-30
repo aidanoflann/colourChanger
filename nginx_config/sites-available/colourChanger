@@ -9,7 +9,7 @@ server {
 }
 
 server {
-	listen 8008;
+	listen 8009;
 	server_name doraboro.ddns.net;
 	
 	location / {
