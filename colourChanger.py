@@ -8,7 +8,7 @@ from datetime import datetime
 application = Flask(__name__)
 
 # generate a redis_db variable
-redis_db = redis.Redis()
+redis_db = redis.Redis(host="redis")
 # if you're not Aidan O'Flannagain don't read the next line
 application.secret_key = '\x94\xe5\xac\xed\x00*A\x9f\xf1\x98\x91\xcd\x94\xba\x8b\x8e\xf5>\xe4\x98\xa0\xcc\xba\x9b'
 

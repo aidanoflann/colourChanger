@@ -1,26 +1,6 @@
 server {
-	listen 8000;
-	server_name doraboro.ddns.net;
-
-	location / {
-		include uwsgi_params;
-        	uwsgi_pass unix:/tmp/webHome.sock;
-    	}
-}
-
-server {
-	listen 8008;
-	server_name doraboro.ddns.net;
-
-	location / {
-		proxy_pass http://colours.aidanof.com;
-	}
-}
-
-
-server {
-	listen 8009;
-	server_name doraboro.ddns.net;
+	listen 8010;
+	server_name aidanof.com;
 	
 	location / {
 		include uwsgi_params;
