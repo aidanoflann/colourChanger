@@ -40,7 +40,7 @@ def change_colour(colour):
     """
     if isinstance(colour, basestring):
         # add the current time and new colour value as a json
-        redis_db.rpush('entries', '{"time":"' + str(datetime.now()) + '", "colour-to":"' + colour + '"}')
+        redis_db.rpush('entries', '{"time":"' + str(datetime.utcnow()) + '", "colour-to":"' + colour + '"}')
 
 
 def request_colour():
