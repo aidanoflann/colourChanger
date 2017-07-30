@@ -4,6 +4,7 @@ import random
 import redis
 import json
 import hashlib
+from dateutil import parser
 from datetime import datetime
 application = Flask(__name__)
 
@@ -95,10 +96,11 @@ def root_page():
         return redirect(url_for("login"))
 
 
-@application.route("/login", methods = ['GET','POST'])
+@application.route("/login", methods=['GET', 'POST'])
 def login():
     colour = request_colour()
-    last_change_time = get_last_change_time()
+    last_change_time = parser.parse(get_last_change_time())
+    days, hours, minutes, seconds = days_hours_minutes_seconds(datetime.now(), last_change_time)
     if request.method == "GET":
         return "<body style = 'background-color:" + colour + "'>\
             <center><div style = 'background-color:white; color:black; width:40%;'><br>\
@@ -109,10 +111,11 @@ def login():
                     password: <input type='password' name='password'><br>\
                     <input type='submit'>\
                 </form><br>\
-                This page has been <span style='color:{}'>{}</span> since {}.<br>\
+                This page has been <span style='color:{}'>{}</span> for <br>\
+                {} days, {} hrs, {} mins, and {} secs.<br>\
             <br>\
             </center></div>\
-            </body>".format(colour, colour, last_change_time)
+            </body>".format(colour, colour, days, hours, minutes, seconds)
     elif request.method == "POST":
         request_data = parse_qs(request.get_data())
         # first, redirect if either the username or pass were empty
@@ -155,6 +158,11 @@ def change_colour_post():
     else:
         return "Not a POST request"
 
+
+def days_hours_minutes_seconds(new_time, old_time):
+    "Return tuple"
+    td = new_time - old_time
+    return td.days, td.seconds/3600, (td.seconds/60)%60, td.seconds%60
 
 if __name__ == "__main__":
     application.run()
