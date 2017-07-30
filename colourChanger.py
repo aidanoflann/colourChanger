@@ -54,6 +54,18 @@ def request_colour():
     return colour
 
 
+def get_last_change_time():
+    """ Get a string representing the last time the colour was changed.
+    
+    :return: 
+    """
+    stored_time = redis_db.lindex('entries', -1)
+    if stored_time is None:
+        return None
+    time = json.loads(stored_time)["time"]
+    return time
+
+
 # / will be the location of the webapp
 @application.route("/", methods=['GET', 'POST'])
 def root_page():
@@ -86,6 +98,7 @@ def root_page():
 @application.route("/login", methods = ['GET','POST'])
 def login():
     colour = request_colour()
+    last_change_time = get_last_change_time()
     if request.method == "GET":
         return "<body style = 'background-color:" + colour + "'>\
             <center><div style = 'background-color:white; color:black; width:40%;'>\
@@ -95,9 +108,10 @@ def login():
                     username: <input type='text' name='username'><br>\
                     password: <input type='password' name='password'><br>\
                     <input type='submit'>\
-                </form>\
+                </form><br>\
+                This page has been <span style='color:{}'>{}</span> since {}.<br>\
             </center></div>\
-            </body>"
+            </body>".format(colour, colour, last_change_time)
     elif request.method == "POST":
         request_data = parse_qs(request.get_data())
         # first, redirect if either the username or pass were empty
