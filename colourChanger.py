@@ -113,7 +113,7 @@ def login():
                 <form method='POST'>\
                     username: <input type='text' name='username'><br>\
                     password: <input type='password' name='password'><br>\
-                    <input type='submit'>\
+                    <input type='submit',  value='Login'>\
                 </form><br>\
                 This page has been <span style='color:{}'>{}</span> for <br>\
                 {} days, {} hrs, {} mins, and {} secs.<br>\
