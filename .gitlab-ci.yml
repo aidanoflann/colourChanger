@@ -2,6 +2,7 @@ stages:
   - docker_login
   - docker_build
   - docker_publish
+  - deploy
 
 #-----------docker_login-----------
 
@@ -13,6 +14,8 @@ docker_login:
   tags:
     - docker
 
+#-----------docker_build-----------
+
 docker_build:
   stage: docker_build
   variables:
@@ -21,6 +24,8 @@ docker_build:
     - docker build . -t $DOCKER_IMAGE_NAME
   tags:
     - docker
+
+#-----------docker_publish-----------
 
 docker_publish:
   stage: docker_publish
@@ -31,3 +36,27 @@ docker_publish:
     - docker push 364843010988.dkr.ecr.eu-west-1.amazonaws.com/$DOCKER_IMAGE_NAME:latest
   tags:
     - docker
+
+#-----------deploy-----------
+
+deploy_to_ecs:
+  stage: deploy
+  script:
+    # query ECS to get latest task definition ID
+    - LATEST_TD_NAME=$(aws ecs list-task-definitions | grep colour_changer_port_range | tail -1)
+    - LATEST_TD_ID=${LATEST_TD_NAME#*colour_changer_port_range:}
+    - LATEST_TD_ID=${LATEST_TD_ID%\"*}
+    - NEW_TD_ID=$(($LATEST_TD_ID + 1))
+
+    # use task_definition.json to create task_definition.json
+    - sed 's/<TD_ID>/'$NEW_TD_ID'/g' task_definition.json > task_definition.json
+
+    # Create new task definition
+    - JSON_CONTENT="$(cat task_definition.json)"
+    - aws ecs register-task-definition --family colour_changer_port_range --container-definitions "$JSON_CONTENT"
+    # TODO: delete old task definition
+    # TODO: ecs update-service to use new task definition (see http://docs.aws.amazon.com/cli/latest/reference/ecs/update-service.html)
+    - echo "HI"
+  tags:
+    - docker
+  when: manual
