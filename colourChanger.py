@@ -109,10 +109,10 @@ def login():
         return "<body style = 'background-color:" + colour + "'>\
             <center><div style = 'background-color:white; color:black; width:40%;'><br>\
                 Please enter your username and password below.<br>\
-                If you don't have an account, one will be created.<br><br>\
+                If you don't have an account, one will be created.<br>\
                 <form method='POST'>\
                     username: <input type='text' name='username'><br>\
-                    password: <input type='password' name='password'><br>\
+                    password: <input type='password' name='password'><br><br>\
                     <input type='submit',  value='Login'>\
                 </form><br>\
                 This page has been <span style='color:{}'>{}</span> for <br>\
