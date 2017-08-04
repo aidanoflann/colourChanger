@@ -42,12 +42,11 @@ docker_publish:
 deploy_to_ecs:
   stage: deploy
   script:
-    # use task_definition.json to create task_definition.json
-    - sed 's/<TD_ID>/'$NEW_TD_ID'/g' task_definition.json > task_definition.json
-
     # Create new task definition
     - JSON_CONTENT="$(cat task_definition.json)"
     - NEW_TD=$(aws ecs register-task-definition --family colour_changer_port_range --container-definitions "$JSON_CONTENT")
+
+    # Determine the new revision id
     - LATEST_TD_ID=${NEW_TD#*colour_changer_port_range:}
     - LATEST_TD_ID=${LATEST_TD_ID%\",*}
 
