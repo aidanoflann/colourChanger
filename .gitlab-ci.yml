@@ -42,21 +42,20 @@ docker_publish:
 deploy_to_ecs:
   stage: deploy
   script:
-    # query ECS to get latest task definition ID
-    - LATEST_TD_NAME=$(aws ecs list-task-definitions | grep colour_changer_port_range | tail -1)
-    - LATEST_TD_ID=${LATEST_TD_NAME#*colour_changer_port_range:}
-    - LATEST_TD_ID=${LATEST_TD_ID%\"*}
-    - NEW_TD_ID=$(($LATEST_TD_ID + 1))
-
     # use task_definition.json to create task_definition.json
     - sed 's/<TD_ID>/'$NEW_TD_ID'/g' task_definition.json > task_definition.json
 
     # Create new task definition
     - JSON_CONTENT="$(cat task_definition.json)"
-    - aws ecs register-task-definition --family colour_changer_port_range --container-definitions "$JSON_CONTENT"
-    # TODO: delete old task definition
-    # TODO: ecs update-service to use new task definition (see http://docs.aws.amazon.com/cli/latest/reference/ecs/update-service.html)
-    - echo "HI"
+    - NEW_TD=$(aws ecs register-task-definition --family colour_changer_port_range --container-definitions "$JSON_CONTENT")
+    - LATEST_TD_ID=${NEW_TD#*colour_changer_port_range:}
+    - LATEST_TD_ID=${LATEST_TD_ID%\",*}
+
+    # Update the service to use the new task definition
+    - aws ecs update-service --service colour_changer_port_range --task-definition colour_changer_port_range:$LATEST_TD_ID
+
+    # Deregister the old task definition
+    - aws ecs deregister-task-definition --task-definition colour_changer_port_range:$((LATEST_TD_ID - 1))
   tags:
     - docker
   when: manual
