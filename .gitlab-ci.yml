@@ -50,6 +50,7 @@ deploy_to_ecs:
     # Determine the new revision id
     - LATEST_TD_ID=${NEW_TD#*colour_changer_port_range:}
     - LATEST_TD_ID=${LATEST_TD_ID%\",*}
+    - echo $LATEST_TD_ID
 
     # Update the service to use the new task definition
     - aws ecs update-service --service colour_changer_port_range --task-definition colour_changer_port_range:$LATEST_TD_ID
