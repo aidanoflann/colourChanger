@@ -43,14 +43,12 @@ deploy_to_ecs:
   stage: deploy
   script:
     # Create new task definition
-    - JSON_CONTENT="$(cat task_definition.json)"
+    - JSON_CONTENT="$(cat deployment/task_definition.json)"
     - NEW_TD=$(aws ecs register-task-definition --family colour_changer_port_range --container-definitions "$JSON_CONTENT")
-    - echo $NEW_TD
+    - echo $NEW_TD > new_td.json
 
     # Determine the new revision id
-    - LATEST_TD_ID=${NEW_TD#*colour_changer_port_range:}
-    - LATEST_TD_ID=${LATEST_TD_ID%\",*}
-    - echo $LATEST_TD_ID
+    - LATEST_TD_ID=$(python deployment/get_json_entry.py --json_filename new_td.json --arg_path "taskDefinition,revision"
 
     # Update the service to use the new task definition
     - aws ecs update-service --service colour_changer_port_range --task-definition colour_changer_port_range:$LATEST_TD_ID
