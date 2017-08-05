@@ -44,7 +44,7 @@ deploy_to_ecs:
   script:
     # Create new task definition
     - JSON_CONTENT="$(cat deployment/task_definition.json)"
-    - NEW_TD=$(aws ecs register-task-definition --family colour_changer_port_range --container-definitions "$JSON_CONTENT")
+    - NEW_TD=$(aws ecs register-task-definition --family colour_changer_port_range --container-definitions "$JSON_CONTENT"}
     - echo $NEW_TD > new_td.json
 
     # Determine the new revision id
