@@ -4,3 +4,4 @@ env
 linuxenv
 dump.rdb
 new_td.json
+local_settings.py
