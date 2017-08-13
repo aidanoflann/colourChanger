@@ -21,7 +21,7 @@ docker_build:
   variables:
     DOCKER_IMAGE_NAME: "colour_changer"
   script:
-    - docker build . -t $DOCKER_IMAGE_NAME
+    - docker build . -t $DOCKER_IMAGE_NAME -e APP_REDIS_URL=$APP_REDIS_URL -e APP_REDIS_PORT=$APP_REDIS_PORT
   tags:
     - docker
 
