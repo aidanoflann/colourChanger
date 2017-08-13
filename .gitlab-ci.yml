@@ -21,7 +21,7 @@ docker_build:
   variables:
     DOCKER_IMAGE_NAME: "colour_changer"
   script:
-    - docker build . -t $DOCKER_IMAGE_NAME -e APP_REDIS_URL=$APP_REDIS_URL -e APP_REDIS_PORT=$APP_REDIS_PORT
+    - docker build . -t $DOCKER_IMAGE_NAME
   tags:
     - docker
 
@@ -44,6 +44,8 @@ deploy_to_ecs:
   script:
     # Create new task definition
     - JSON_CONTENT="$(cat deployment/task_definition.json)"
+    - JSON_CONTENT="${JSON_CONTENT/<REDIS_PORT>/$APP_REDIS_PORT}"
+    - JSON_CONTENT="${JSON_CONTENT/<REDIS_URL>/$APP_REDIS_URL}"
     - NEW_TD=$(aws ecs register-task-definition --family colour_changer_port_range --container-definitions "$JSON_CONTENT")
     - echo $NEW_TD > new_td.json
 

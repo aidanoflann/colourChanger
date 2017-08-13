@@ -12,7 +12,16 @@
     "essential": true,
     "mountPoints": [],
     "name": "colour_changer",
-    "environment": [],
+    "environment": [
+      {
+        "name": "APP_REDIS_PORT",
+        "value": "<REDIS_PORT>"
+      },
+      {
+        "name": "APP_REDIS_URL",
+        "value": "<REDIS_URL>"
+      }
+    ],
     "links": [],
     "image": "364843010988.dkr.ecr.eu-west-1.amazonaws.com/colour_changer",
     "logConfiguration": {
