@@ -30,3 +30,22 @@ redis-server
 ```
 uwsgi --ini colourChanger.ini -H linuxenv/
 ```
+
+To instead run the project in a Docker container, follow these steps:
+
+1) Run a redis container with basic configurations:
+```
+docker pull redis
+docker run -p 6379:6379 --name my_redis redis
+```
+
+2) Build this project
+```
+docker build . -t cc
+docker run
+```
+
+3) Run this project, with the required port (see nginx config) exposed. Link to the redis container by name
+```
+docker run --link my_redis:redis -p 8010:8010 -v C:\Users\Aidan\dev\colourChanger\colourChanger.py:/colourChanger.py cc
+```

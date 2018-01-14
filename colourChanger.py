@@ -68,7 +68,7 @@ def get_last_change_time():
     """
     stored_time = redis_db.lindex('entries', -1)
     if stored_time is None:
-        return None
+        return "1-Jan-1975 00:00:00.000"
     time = json.loads(stored_time)["time"]
     return time
 
