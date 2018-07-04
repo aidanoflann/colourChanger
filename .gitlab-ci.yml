@@ -34,6 +34,7 @@ docker_publish:
   script:
     - docker tag $DOCKER_IMAGE_NAME:latest 364843010988.dkr.ecr.eu-west-1.amazonaws.com/$DOCKER_IMAGE_NAME:latest
     - docker push 364843010988.dkr.ecr.eu-west-1.amazonaws.com/$DOCKER_IMAGE_NAME:latest
+    - docker push aidanoflann/$DOCKER_IMAGE_NAME
   tags:
     - docker
 
